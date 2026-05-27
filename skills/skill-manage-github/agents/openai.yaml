@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Manage GitHub"
+  short_description: "Maintain GitHub-backed Codex skills sync repositories"
+  default_prompt: "Use $skill-manage-github to create, update, push, or document a GitHub repository for sharing Codex skills and AGENTS.md across devices."
