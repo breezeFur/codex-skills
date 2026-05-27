@@ -1,0 +1,4 @@
+interface:
+  display_name: "MySQL DB Ops"
+  short_description: "Safe MySQL inspection, query, and change workflow"
+  default_prompt: "Use $mysql-db-ops to inspect or operate a MySQL database safely with runtime-provided credentials."

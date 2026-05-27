@@ -1,0 +1,4 @@
+interface:
+  display_name: "PowerShell Codex"
+  short_description: "Reliable PowerShell commands for Codex on Windows"
+  default_prompt: "Use $powershell-codex to inspect files with reliable PowerShell encoding and pipeline patterns."

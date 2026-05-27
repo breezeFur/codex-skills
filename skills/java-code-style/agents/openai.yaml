@@ -1,0 +1,4 @@
+interface:
+  display_name: "Java Code Style"
+  short_description: "Java coding style, constants, logging, comments"
+  default_prompt: "Use $java-code-style to review or update Java code style, constants, logging, and comments."
