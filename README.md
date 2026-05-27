@@ -16,10 +16,16 @@
 
 ## 初始化远端仓库
 
-本机已经是一个 Git 仓库。你可以在 GitHub、Gitee、GitLab 等平台创建一个空的私有仓库，然后执行：
+本机已经是一个 Git 仓库。当前远端仓库：
+
+```text
+https://github.com/breezeFur/codex-skills.git
+```
+
+你可以执行：
 
 ```bash
-git remote add origin <你的私有仓库地址>
+git remote add origin https://github.com/breezeFur/codex-skills.git
 git branch -M main
 git push -u origin main
 ```
@@ -27,13 +33,13 @@ git push -u origin main
 另一台设备拉取：
 
 ```bash
-git clone <你的私有仓库地址> ~/codex-skills
+git clone https://github.com/breezeFur/codex-skills.git ~/codex-skills
 ```
 
 Windows 也可以克隆到例如：
 
 ```powershell
-git clone <你的私有仓库地址> D:\codex-skills
+git clone https://github.com/breezeFur/codex-skills.git D:\codex-skills
 ```
 
 ## Windows 软链接
