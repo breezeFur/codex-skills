@@ -1,6 +1,6 @@
 ---
 name: skill-manage-github
-description: Create and maintain a GitHub-backed Codex configuration sync repository. Use when the user wants to share Codex custom skills or AGENTS.md across devices, create a local Git repository for Codex skills, copy selected skills into a repo, write README symlink instructions for Windows/Linux/macOS, add GitHub remotes, push the repo, update synced skills, handle GitHub CLI absence, or verify that skill sync repositories avoid secrets and Codex-managed cache folders.
+description: Create and maintain a GitHub-backed Codex configuration sync repository. Use when the user wants to share Codex custom skills or AGENTS.md across devices, create a local Git repository for Codex skills, copy selected skills into a repo, write README symlink instructions for Windows/Linux/macOS, add GitHub remotes, push the repo, update synced skills, handle GitHub CLI absence, or verify that skill sync repositories avoid secrets and Codex-managed cache folders. Also use whenever any Codex skill is created, updated, renamed, or deleted so remote updates are checked before edits and local skill changes are pushed afterward.
 ---
 
 # Skill Manage GitHub
@@ -20,6 +20,23 @@ Use this skill for:
 - Verifying secrets, ignored folders, line endings, and Git status before commit.
 
 Do not include Codex-managed directories such as `.system`, `plugins/cache`, runtime caches, logs, or session history.
+
+## Skill Update Rule
+
+Whenever any Codex skill is created, updated, renamed, or deleted:
+
+1. Before editing the local skill, inspect the sync repository and fetch the remote:
+
+   ```powershell
+   git -C <sync-repo> status --short --branch --ignored
+   git -C <sync-repo> fetch origin
+   git -C <sync-repo> rev-list --left-right --count origin/main...main
+   ```
+
+2. If the remote is ahead, pull or rebase before making local skill edits.
+3. After the skill edit is complete, copy current `AGENTS.md` and all user-authored skills into the sync repo.
+4. Run the secret and excluded-folder checks.
+5. Commit, push, and verify `main` tracks `origin/main`.
 
 ## Workflow
 
@@ -103,11 +120,13 @@ Do not include Codex-managed directories such as `.system`, `plugins/cache`, run
 When the repository already exists:
 
 1. Run `git status --short --branch` first and preserve unrelated user changes.
-2. Copy changed custom skills or `AGENTS.md` into the repo.
-3. Run the secret scan.
-4. Stage only intended paths.
-5. Commit with a clear message such as `Update Codex skills`.
-6. Push and verify branch tracking.
+2. Run `git fetch origin` and check `origin/main...main` before copying local changes.
+3. If remote updates exist, pull or rebase before continuing.
+4. Copy changed custom skills or `AGENTS.md` into the repo.
+5. Run the secret scan.
+6. Stage only intended paths.
+7. Commit with a clear message such as `Update Codex skills`.
+8. Push and verify branch tracking.
 
 ## PowerShell Notes
 

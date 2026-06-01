@@ -14,6 +14,25 @@ git commit -m "Initialize Codex skills sync repo"
 
 If PowerShell rejects a Bash-style command separator, rerun the commands separately.
 
+## Before Updating Skills
+
+Before creating, updating, renaming, or deleting any Codex skill, check whether the remote sync repo has newer changes:
+
+```powershell
+git -C <sync-repo> status --short --branch --ignored
+git -C <sync-repo> fetch origin
+git -C <sync-repo> rev-list --left-right --count origin/main...main
+```
+
+Interpret `rev-list --left-right --count origin/main...main` as:
+
+- `0 0`: local and remote match.
+- `<n> 0`: remote is ahead by `n` commits; pull or rebase before editing skills.
+- `0 <n>`: local is ahead by `n` commits; push after validation.
+- `<n> <m>`: local and remote diverged; stop and inspect before editing skills.
+
+After the skill edit, copy current `AGENTS.md` and all user-authored skills into the sync repo, then run safety checks, commit, push, and verify.
+
 ## GitHub CLI
 
 Check whether GitHub CLI is available:
