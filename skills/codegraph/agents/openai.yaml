@@ -1,0 +1,4 @@
+interface:
+  display_name: "CodeGraph"
+  short_description: "Use local CodeGraph for code context and call flows"
+  default_prompt: "Use $codegraph to inspect code architecture, call relationships, bug flow, impact analysis, and related symbols with local CodeGraph tools before broad text search."

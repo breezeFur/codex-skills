@@ -7,6 +7,7 @@
 
 当前已同步的 skill：
 
+- `codegraph`
 - `java-code-style`
 - `java-dev`
 - `mysql-db-ops`
@@ -50,7 +51,7 @@ PowerShell 建议以管理员身份运行，或者开启 Windows 开发者模式
 ```powershell
 $Repo = "D:\codex-skills"
 $CodexHome = Join-Path $env:USERPROFILE ".codex"
-$Skills = @("java-code-style", "java-dev", "mysql-db-ops", "powershell-codex", "skill-manage-github")
+$Skills = @("codegraph", "java-code-style", "java-dev", "mysql-db-ops", "powershell-codex", "skill-manage-github")
 
 New-Item -ItemType Directory -Force -Path (Join-Path $CodexHome "skills") | Out-Null
 
@@ -85,7 +86,7 @@ New-Item -ItemType Junction -Path "$env:USERPROFILE\.codex\skills\java-dev" -Tar
 ```bash
 REPO="$HOME/codex-skills"
 CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
-SKILLS="java-code-style java-dev mysql-db-ops powershell-codex skill-manage-github"
+SKILLS="codegraph java-code-style java-dev mysql-db-ops powershell-codex skill-manage-github"
 
 mkdir -p "$CODEX_HOME/skills"
 
@@ -111,7 +112,7 @@ done
 ```bash
 REPO="$HOME/codex-skills"
 CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
-SKILLS="java-code-style java-dev mysql-db-ops powershell-codex skill-manage-github"
+SKILLS="codegraph java-code-style java-dev mysql-db-ops powershell-codex skill-manage-github"
 
 mkdir -p "$CODEX_HOME/skills"
 
