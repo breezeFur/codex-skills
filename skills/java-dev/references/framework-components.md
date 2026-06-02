@@ -50,6 +50,24 @@ Do not leak stack traces or internal messages in API responses unless the existi
 - Populate it in an interceptor or filter.
 - Always clear ThreadLocal state in `finally` or `afterCompletion`.
 - Provide a safe fallback user such as `system` for scheduled tasks and audit filling.
+- For new code, name the request correlation field `trackId` and write it to MDC key `trackId`. If existing code already exposes `traceId`, keep that API stable but mirror the same value to `trackId` in MDC.
+- Web requests should read an incoming track ID header when the project has one, otherwise generate a new value.
+- Scheduled jobs must also create a `trackId`, for example in a scheduling aspect or task decorator, so scheduler logs are correlated.
+- Clear both ThreadLocal context and MDC in `finally` or `afterCompletion`.
+
+## Logging Pattern
+
+Generated services should configure console logs with the track ID between thread name and log level:
+
+```text
+2026-06-02 09:35:30.013 [scheduling-1] [d952b913fb5a42378747b3c119a10fe3] DEBUG c.d.k.c.web.ScheduleTraceIdAspect:43    message
+```
+
+For Spring Boot / Logback, use this pattern unless the existing project has an equivalent:
+
+```text
+%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{trackId:-}] %-5level %logger{36}:%line    %msg%n
+```
 
 ## Web Configuration
 
@@ -58,5 +76,5 @@ Include only what the project needs:
 - Interceptor registration.
 - Jackson configuration.
 - CORS configuration if requested.
-- Trace ID or request logging if the project uses it.
+- Track ID or request logging if the project uses it.
 - OpenAPI grouping if the project uses grouped docs.

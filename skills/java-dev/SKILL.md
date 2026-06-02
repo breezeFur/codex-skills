@@ -1,6 +1,6 @@
 ---
 name: java-dev
-description: Generate and maintain Java backend services and modules using Maven, JDK 21, Spring Boot 3.4, Lombok, MySQL, MyBatis-Plus, MyBatis-Plus-Join, Redis, SpringDoc OpenAPI, typed unified API responses, service-name-based multi-module architecture, DAO/Mapper/Entity data layering, MetaObjectHandler audit filling, UUIDv7 IDs, Long millisecond timestamps, Chinese OpenAPI descriptions, framework interceptors, ThreadLocal context, exception handling, Controller/Service business modules, and tests. Use when creating or modifying Java projects, modules, controllers, services, DAOs, mappers, entities, request/response DTOs, VO objects, database access, Redis cache, OpenAPI annotations, framework infrastructure, or fixing Java code to match these conventions. For Java coding style, constants, logging, comments, Lombok consistency, magic values, and naming cleanup, use java-code-style.
+description: Generate and maintain Java backend services and modules using Maven, JDK 21, Spring Boot 3.4, Lombok, MySQL, MyBatis-Plus, MyBatis-Plus-Join, Redis, SpringDoc OpenAPI, typed unified API responses, service-name-based multi-module architecture, DAO/Mapper/Entity data layering, MetaObjectHandler audit filling, UUIDv7 IDs, Long millisecond timestamps, Chinese OpenAPI descriptions, framework interceptors, ThreadLocal context, exception handling, MDC trackId log format, Controller/Service business modules, and tests. Use when creating or modifying Java projects, modules, controllers, services, DAOs, mappers, entities, request/response DTOs, VO objects, database access, Redis cache, OpenAPI annotations, framework infrastructure, or fixing Java code to match these conventions. For Java coding style, constants, logging statements, comments, Lombok consistency, magic values, and naming cleanup, use java-code-style.
 ---
 
 # Java Dev
@@ -45,6 +45,13 @@ description: Generate and maintain Java backend services and modules using Maven
 - Use MyBatis-Plus `MetaObjectHandler` for audit field filling.
 - Annotate Controllers with `@Tag`, API methods with `@Operation`, and Entity/Request/VO/Result/PageResult classes or records with `@Schema`.
 - Write OpenAPI names, summaries, and descriptions in Chinese for new code.
+- Configure generated services so console logs include an MDC `trackId` between thread and level, for example:
+
+  ```text
+  2026-06-02 09:35:30.013 [scheduling-1] [d952b913fb5a42378747b3c119a10fe3] DEBUG c.d.k.c.web.ScheduleTraceIdAspect:43    message
+  ```
+
+  Use Logback/Spring Boot pattern `%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{trackId:-}] %-5level %logger{36}:%line    %msg%n` or the existing project's equivalent. New framework code should put the request or scheduled-task identifier into MDC key `trackId` and clear it in `finally` or request completion. If an existing project already uses `traceId`, preserve compatibility but also bridge the value into MDC `trackId` so the log format stays stable.
 - Apply `java-code-style` for constants, logging, comments, Lombok consistency, naming cleanup, and magic value cleanup.
 
 ## Defaults

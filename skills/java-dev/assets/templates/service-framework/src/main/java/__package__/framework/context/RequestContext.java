@@ -1,4 +1,4 @@
 package {{packageRoot}}.framework.context;
 
-public record RequestContext(String userId, String traceId) {
+public record RequestContext(String userId, String trackId) {
 }
