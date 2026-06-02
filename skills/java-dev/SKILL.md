@@ -22,13 +22,15 @@ description: Generate and maintain Java backend services and modules using Maven
    - Redis cache rules: `references/redis-cache.md`
    - Code style, constants, logging, comments, Lombok consistency, magic values, and naming cleanup: use `java-code-style`.
 6. Reuse `assets/templates/` when generating a new service or module, then adapt package names, module names, and existing project conventions.
-7. Run the smallest relevant verification command available: compile, module test, focused test, or static inspection. Report any verification you could not run.
+7. For database reverse-generation requests, copy `assets/templates/db-code-generator/DbCodeGenerator.java` into the target database module, usually `<db-module>/src/test/java/<package-path>/db/generator/DbCodeGenerator.java`. Fill the constants at the top from the current project's datasource config or user-provided database information, set `DB_MODULE_NAME` and `BASE_PACKAGE`, keep `OVERWRITE_EXISTING_FILES=false` unless the user explicitly asks to overwrite, then use it to generate Entity, Mapper, DAO, and DAO implementation files directly under the database module.
+8. Run the smallest relevant verification command available: single-file `javac` for the generator, compile, module test, focused test, or static inspection. Report any verification you could not run.
 
 ## Non-Negotiable Rules
 
 - Do not invent a new architecture when an existing project already has one.
 - Put the application startup class in the service main module.
 - Put database entities, mappers, DAOs, DAO implementations, and database configuration in the service database module.
+- Do not store real database credentials in skill assets or synced skill repositories. Only fill real datasource values in the project-local generated `DbCodeGenerator.java` when needed for the current task.
 - Put interceptors, ThreadLocal holders, constants, exception handling, custom exceptions, and shared web infrastructure in the service framework module.
 - Put business Controllers, Services, module-local DTOs, response VOs, and business-local enums in business modules. Use the business module's `model.dto` and `model.vo` packages for DTO/VO classes that are only used by that module.
 - Keep normal database operations in DAO/DAO implementation classes using Lambda-style MyBatis-Plus or MPJ APIs.
