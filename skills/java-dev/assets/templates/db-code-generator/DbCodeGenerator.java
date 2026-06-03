@@ -46,6 +46,7 @@ public final class DbCodeGenerator {
     private static final String SOURCE_ROOT = DB_MODULE_NAME + "/src/main/java";
     private static final String TABLE_NAME_PATTERN = "%";
     private static final Set<String> TABLE_NAMES = Set.of();
+    private static final Map<String, String> ENTITY_NAME_OVERRIDES = Map.of();
     private static final boolean OVERWRITE_EXISTING_FILES = false;
 
     private static final Set<String> INSERT_FILL_COLUMNS = Set.of("created_at", "created_by");
@@ -420,7 +421,7 @@ public final class DbCodeGenerator {
 
     private record TableMeta(String name, String remarks, List<ColumnMeta> columns, Set<String> primaryKeys) {
         private String entityName() {
-            return toClassName(name);
+            return ENTITY_NAME_OVERRIDES.getOrDefault(name, toClassName(name));
         }
 
         private String mapperName() {
