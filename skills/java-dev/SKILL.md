@@ -23,7 +23,8 @@ description: Generate and maintain Java backend services and modules using Maven
    - Code style, constants, logging, comments, Lombok consistency, magic values, and naming cleanup: use `java-code-style`.
 6. Reuse `assets/templates/` when generating a new service or module, then adapt package names, module names, and existing project conventions.
 7. For database reverse-generation requests, copy `assets/templates/db-code-generator/DbCodeGenerator.java` into the target database module, usually `<db-module>/src/test/java/<package-path>/db/generator/DbCodeGenerator.java`. Fill the constants at the top from the current project's datasource config or user-provided database information, set `DB_MODULE_NAME` and `BASE_PACKAGE`, keep `OVERWRITE_EXISTING_FILES=false` unless the user explicitly asks to overwrite, then use it to generate Entity, Mapper, DAO, and DAO implementation files directly under the database module.
-8. Run the smallest relevant verification command available: single-file `javac` for the generator, compile, module test, focused test, or static inspection. Report any verification you could not run.
+8. When Java, SQL, YAML, Markdown, or OpenAPI text may contain Chinese, apply the Chinese encoding guard below before reading or editing nearby text.
+9. Run the smallest relevant verification command available: single-file `javac` for the generator, compile, module test, focused test, or static inspection. Report any verification you could not run.
 
 ## Non-Negotiable Rules
 
@@ -47,6 +48,7 @@ description: Generate and maintain Java backend services and modules using Maven
 - Use MyBatis-Plus `MetaObjectHandler` for audit field filling.
 - Annotate Controllers with `@Tag`, API methods with `@Operation`, and Entity/Request/VO/Result/PageResult classes or records with `@Schema`.
 - Write OpenAPI names, summaries, and descriptions in Chinese for new code.
+- Treat mojibake or replacement glyphs in Chinese comments, annotations, SQL, YAML, JSON, or Markdown as an encoding defect. Do not copy garbled terminal output into source files.
 - Configure generated services so console logs include an MDC `trackId` between thread and level, for example:
 
   ```text
@@ -55,6 +57,17 @@ description: Generate and maintain Java backend services and modules using Maven
 
   Use Logback/Spring Boot pattern `%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{trackId:-}] %-5level %logger{36}:%line    %msg%n` or the existing project's equivalent. New framework code should put the request or scheduled-task identifier into MDC key `trackId` and clear it in `finally` or request completion. If an existing project already uses `traceId`, preserve compatibility but also bridge the value into MDC `trackId` so the log format stays stable.
 - Apply `java-code-style` for constants, logging, comments, Lombok consistency, naming cleanup, and magic value cleanup.
+
+## Chinese Encoding And Mojibake Guard
+
+Use this guard whenever a Java backend task touches files or terminal output that may contain Chinese.
+
+- Keep Maven projects explicitly UTF-8: root `pom.xml` should include `<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>`, and generated Java/SQL/YAML/Markdown files should be written as UTF-8 without BOM unless the existing project requires otherwise.
+- On Windows/PowerShell, inspect text with UTF-8 output enabled and explicit file encoding, for example: `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $OutputEncoding = [System.Text.Encoding]::UTF8; Get-Content -LiteralPath '<file>' -Encoding UTF8`.
+- If UTF-8 reads still show garbled fragments such as `鐨`, `閿`, `鍦`, `瑁`, `鈥`, `�`, or Chinese-looking nonsense around otherwise normal punctuation, do not infer the intended Chinese from that output. Check Git history, IDE local history, backups, or the original product document before rewriting nearby comments, OpenAPI descriptions, SQL, YAML, or string literals.
+- Before applying a patch near Chinese text, get one clean UTF-8 line-numbered read of the target file. If the clean read is garbled, limit the change to code that does not require rewriting the garbled text, or first recover the intended text from a trusted source.
+- After edits, run a lightweight scan for common mojibake signals, for example `rg -n "�|鐨|閿|鍦|瑁|鈥" <project> -g '*.java' -g '*.sql' -g '*.yml' -g '*.yaml' -g '*.md' -g '!target/**'`. Treat the result as a review cue, not an automatic replace list.
+- Do not convert, normalize, or rewrite a whole file just to fix encoding unless the user asked for that cleanup and a trusted clean source is available.
 
 ## Defaults
 
