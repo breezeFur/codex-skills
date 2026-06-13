@@ -6,3 +6,14 @@
 - 维护 `vibecodingdoc/INDEX.md` 作为轻量索引；每次新增变更说明时追加一条索引，至少包含日期、文件路径、主题、类型、关键词和一句话摘要，方便后续 AI 先读索引再按关键词打开原文。
 - 如果当前项目是 Git 仓库，确保项目根目录的 `.gitignore` 包含 `vibecodingdoc/`；如果 `.gitignore` 不存在，可以创建；如果已包含等效规则，不要重复添加。
 - 创建、修改、重命名或删除任何 Codex skill 前，先使用 `skill-manage-github` 检查 skills 同步仓库远端是否有更新；如果远端有更新，先拉取并处理后再改。本次 skill 变更完成后，必须同步当前机器的 `AGENTS.md` 与自定义 skills 到远端，并验证推送结果。
+
+<!-- CODEGRAPH_START -->
+## CodeGraph
+
+In repositories indexed by CodeGraph (a `.codegraph/` directory exists at the repo root), reach for it BEFORE grep/find or reading files when you need to understand or locate code:
+
+- **MCP tools** (when available): `codegraph_explore` answers most code questions in one call — the relevant symbols' verbatim source plus the call paths between them. `codegraph_node` returns one symbol's source + callers, or reads a whole file with line numbers. If the tools are listed but deferred, load them by name via tool search.
+- **Shell** (always works): `codegraph explore "<symbol names or question>"` and `codegraph node <symbol-or-file>` print the same output.
+
+If there is no `.codegraph/` directory, skip CodeGraph entirely — indexing is the user's decision.
+<!-- CODEGRAPH_END -->
