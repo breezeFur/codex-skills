@@ -33,6 +33,8 @@ description: Generate and maintain Java backend services and modules using Maven
 - Put database entities, mappers, DAOs, DAO implementations, and database configuration in the service database module.
 - Do not store real database credentials in skill assets or synced skill repositories. Only fill real datasource values in the project-local generated `DbCodeGenerator.java` when needed for the current task.
 - Put interceptors, ThreadLocal holders, constants, exception handling, custom exceptions, and shared web infrastructure in the service framework module.
+- Do not hide business failures behind fallback defaults. When a required business rule, parameter, entity, or dependency result is invalid or missing, fail explicitly with the project's custom exception such as `BizException` plus `ErrorCode`.
+- Use fallback only for explicitly degradable paths such as cache miss/cache failure, metrics, optional recommendations, or non-critical notifications. Log useful context and keep the fallback narrow.
 - Put business Controllers, Services, module-local DTOs, response VOs, and business-local enums in business modules. Use the business module's `model.dto` and `model.vo` packages for DTO/VO classes that are only used by that module.
 - Keep normal database operations in DAO/DAO implementation classes using Lambda-style MyBatis-Plus or MPJ APIs.
 - Use Mapper annotation SQL only when raw SQL is necessary.

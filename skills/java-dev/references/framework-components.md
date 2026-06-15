@@ -35,6 +35,10 @@ If the project has a common module, pure response contracts such as `Result` may
 
 - Use `BizException` for expected business failures.
 - Use `ErrorCode` or an existing project error-code type for reusable error definitions.
+- Prefer explicit custom exceptions over defensive fallback when the business cannot continue safely.
+- Required data that is missing, invalid state transitions, failed permission checks, invalid parameters, and violated business invariants should fail fast with a meaningful error code.
+- Do not catch broad `Exception` and return `null`, an empty collection, a default object, or a fake success unless the feature is explicitly designed as degradable.
+- Allowed fallback paths must be narrow and intentional, for example cache failures, metrics, optional recommendation data, or notification side effects. Log enough context to diagnose the degradation.
 - Add exception logging according to `java-code-style`.
 - Global exception handling should convert:
   - business exceptions

@@ -1,6 +1,6 @@
 ---
 name: java-code-style
-description: Java coding style and cleanup rules for backend projects. Use when reviewing, generating, or refactoring Java code for constants instead of magic values, SLF4J logging, meaningful comments, Lombok consistency, naming, enum placement, shared constants under the framework constants package, avoiding noisy comments, and aligning code style with an existing Java repository.
+description: Java coding style and cleanup rules for backend projects. Use when reviewing, generating, or refactoring Java code for constants instead of magic values, SLF4J logging, meaningful comments, Lombok consistency, naming, enum placement, shared constants under the framework constants package, avoiding noisy comments, avoiding unsafe fallback/defaults, and aligning code style with an existing Java repository.
 ---
 
 # Java Code Style
@@ -34,6 +34,15 @@ description: Java coding style and cleanup rules for backend projects. Use when 
 - Include stable identifiers such as user ID, request ID, entity ID, job ID, or cache key when useful.
 - Do not log secrets, passwords, access tokens, refresh tokens, authorization headers, or full sensitive payloads.
 
+## Failure And Fallback
+
+- Do not write "just keep running" fallback code for required business paths.
+- Do not catch broad `Exception` and return `null`, an empty collection, a default object, or a fake success.
+- Do not silently repair invalid input, missing required data, or impossible business state with arbitrary defaults.
+- Prefer explicit custom exceptions such as `BizException` with a reusable `ErrorCode` when business expectations are not met.
+- Fallback is allowed only when the product behavior explicitly supports degradation, such as cache failure, metrics, optional recommendation data, or notification side effects.
+- When fallback is valid, keep it narrow, log useful context, and avoid hiding data corruption or workflow failure.
+
 ## Comments
 
 - Add concise comments for key business rules, non-obvious branches, important SQL/cache decisions, concurrency behavior, and integration assumptions.
@@ -63,6 +72,7 @@ description: Java coding style and cleanup rules for backend projects. Use when 
 - Shared constants are in the framework `constants` package.
 - Closed business states use enums where appropriate.
 - Logs use SLF4J and do not expose sensitive data.
+- Business failures use explicit exceptions instead of unsafe fallback/defaults.
 - Comments explain key rules rather than syntax.
 - Lombok usage matches nearby code.
 - Style-only changes do not alter behavior.
