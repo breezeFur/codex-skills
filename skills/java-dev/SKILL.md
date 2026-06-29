@@ -1,6 +1,6 @@
 ---
 name: java-dev
-description: Generate and maintain Java backend services and modules using Maven, JDK 21, Spring Boot 3.4, Lombok, MySQL, MyBatis-Plus, MyBatis-Plus-Join, Redis, SpringDoc OpenAPI, typed unified API responses, service-name-based multi-module architecture, DAO/Mapper/Entity data layering, MetaObjectHandler audit filling, UUIDv7 IDs, Long millisecond timestamps, Chinese OpenAPI descriptions, framework interceptors, ThreadLocal context, exception handling, MDC trackId log format, Controller/Service business modules, and tests. Use when creating or modifying Java projects, modules, controllers, services, DAOs, mappers, entities, request/response DTOs, VO objects, database access, Redis cache, OpenAPI annotations, framework infrastructure, or fixing Java code to match these conventions. For Java coding style, constants, logging statements, comments, Lombok consistency, magic values, and naming cleanup, use java-code-style.
+description: Generate and maintain Java backend services and modules using Maven, JDK 21, Spring Boot 3.4, Lombok, MySQL, MyBatis-Plus, MyBatis-Plus-Join, Redis, SpringDoc OpenAPI, typed unified API responses, service-name-based multi-module architecture, DAO/Mapper/Entity data layering, MetaObjectHandler audit filling, UUIDv7 IDs, Long millisecond timestamps, Chinese OpenAPI descriptions, framework interceptors, ThreadLocal context, exception handling, MDC trackId log format, framework constants classes with Chinese comments, Controller/Service business modules, and tests. Use when creating or modifying Java projects, modules, controllers, services, DAOs, mappers, entities, request/response DTOs, VO objects, database access, Redis cache, OpenAPI annotations, framework infrastructure, shared constants, or fixing Java code to match these conventions. For Java coding style, constants, logging statements, comments, Lombok consistency, magic values, and naming cleanup, use java-code-style.
 ---
 
 # Java Dev
@@ -16,7 +16,7 @@ description: Generate and maintain Java backend services and modules using Maven
    - Naming and package conventions: `references/module-conventions.md`
    - Controller and API contracts: `references/api-contracts.md`
    - Entity, ID, audit, Mapper, DAO rules: `references/entity-and-db.md`
-   - Framework infrastructure: `references/framework-components.md`
+   - Framework infrastructure and shared constants: `references/framework-components.md`
    - MPJ and data access patterns: `references/mpj.md`
    - OpenAPI annotation rules: `references/openapi-schema.md`
    - Redis cache rules: `references/redis-cache.md`
@@ -33,6 +33,10 @@ description: Generate and maintain Java backend services and modules using Maven
 - Put database entities, mappers, DAOs, DAO implementations, and database configuration in the service database module.
 - Do not store real database credentials in skill assets or synced skill repositories. Only fill real datasource values in the project-local generated `DbCodeGenerator.java` when needed for the current task.
 - Put interceptors, ThreadLocal holders, constants, exception handling, custom exceptions, and shared web infrastructure in the service framework module.
+- Put shared constants in the service framework module under the `framework.constants` package. Create focused constants classes by responsibility, such as `ApiResponseConstants`, `WebConstants`, `CacheConstants`, or `SecurityConstants`; do not create a catch-all `CommonConstants` for unrelated values.
+- Every constants class and every public or shared constant must have a concise Chinese Javadoc or line comment explaining the business meaning, unit, value format, and usage boundary when relevant. Comments must explain why the value exists, not merely repeat the identifier.
+- Constants classes must be `final` with a private constructor and expose values as `public static final`. Keep constants named by business meaning, not by literal value.
+- Prefer enums for closed business states, workflow states, provider types, and other finite domain choices instead of loose string constants. Put cross-module shared enums in framework only when they are shared contracts; keep module-local enums in the owning business module.
 - Do not hide business failures behind fallback defaults. When a required business rule, parameter, entity, or dependency result is invalid or missing, fail explicitly with the project's custom exception such as `BizException` plus `ErrorCode`.
 - Use fallback only for explicitly degradable paths such as cache miss/cache failure, metrics, optional recommendations, or non-critical notifications. Log useful context and keep the fallback narrow.
 - Put business Controllers, Services, module-local DTOs, response VOs, and business-local enums in business modules. Use the business module's `model.dto` and `model.vo` packages for DTO/VO classes that are only used by that module.
@@ -82,3 +86,4 @@ Use this guard whenever a Java backend task touches files or terminal output tha
 - API docs: SpringDoc OpenAPI.
 - ID generation: UUIDv7 hidden behind `IdGenerator`.
 - Audit filling: MyBatis-Plus `MetaObjectHandler`.
+- Shared constants: focused constants classes under the framework module's `framework.constants` package, with Chinese comments on the class and each shared constant.

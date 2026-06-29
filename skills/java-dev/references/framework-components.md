@@ -20,7 +20,9 @@ framework/
   interceptor/
     RequestContextInterceptor.java
   constants/
-    CommonConstants.java
+    ApiResponseConstants.java
+    WebConstants.java
+    CacheConstants.java
 ```
 
 If the project has a common module, pure response contracts such as `Result` may live there. Web configuration and interceptors stay in framework.
@@ -30,6 +32,17 @@ If the project has a common module, pure response contracts such as `Result` may
 - Provide a typed API response wrapper when no project wrapper exists.
 - Provide a typed pagination wrapper with total count, page number, page size, and records.
 - Add Chinese `@Schema` descriptions.
+- Move reusable response codes, default response messages, header names, request attribute names, and other shared API literals into focused constants classes under `framework.constants`.
+
+## Constants
+
+- Put all cross-class or cross-module shared constants in the framework module under `framework.constants`.
+- Split constants by responsibility. Use names such as `ApiResponseConstants`, `WebConstants`, `CacheConstants`, `SecurityConstants`, or a project-specific domain name. Avoid broad dumping grounds such as `CommonConstants` when values are unrelated.
+- Define constants classes as `final` with a private constructor.
+- Define reusable values as `public static final`, and name them by business meaning rather than literal value.
+- Add concise Chinese Javadoc or line comments to every constants class and every public/shared constant. The comment should explain business meaning, unit, format, and usage boundary when relevant.
+- Keep one-class-only implementation details as `private static final` in the owning class. Move them to `framework.constants` when they are reused, represent shared contracts, or are likely to be referenced across modules.
+- Prefer enums for closed finite business values such as states, provider types, modes, and workflow phases. Put shared contract enums in framework only when multiple modules depend on them.
 
 ## Exceptions
 

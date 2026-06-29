@@ -42,6 +42,8 @@ Use the repository package root, then module responsibility:
 ## Placement Rules
 
 - Put cross-class or cross-module shared constants in the framework module under the `constants` package so every business module can reuse them through the framework dependency.
+- Create focused constants classes by responsibility, such as `ApiResponseConstants`, `WebConstants`, `CacheConstants`, or `SecurityConstants`; avoid catch-all classes that mix unrelated values.
+- Add Chinese comments to every constants class and every public/shared constant, explaining the business meaning, unit, format, and usage boundary when relevant.
 - Put business-local enums in the owning business module.
 - Put cross-module enums in the framework module when they are part of shared infrastructure or shared business contracts; keep highly domain-specific enums in the owning business module unless multiple modules need them.
 - Put module-local DTOs and VOs in the owning business module, preferably under `model.dto` and `model.vo`.

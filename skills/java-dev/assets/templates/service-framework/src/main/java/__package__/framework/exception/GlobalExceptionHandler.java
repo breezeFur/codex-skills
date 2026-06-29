@@ -1,5 +1,6 @@
 package {{packageRoot}}.framework.exception;
 
+import {{packageRoot}}.framework.constants.ApiResponseConstants;
 import {{packageRoot}}.framework.web.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -22,14 +23,14 @@ public class GlobalExceptionHandler {
         String message = ex.getBindingResult().getFieldErrors().stream()
                 .findFirst()
                 .map(error -> error.getField() + " " + error.getDefaultMessage())
-                .orElse("请求参数校验失败");
+                .orElse(ApiResponseConstants.VALIDATION_ERROR_MESSAGE);
         log.warn("Request validation failed: {}", message);
-        return Result.fail(400, message);
+        return Result.fail(ApiResponseConstants.VALIDATION_ERROR_CODE, message);
     }
 
     @ExceptionHandler(Exception.class)
     public Result<Void> handleException(Exception ex) {
         log.error("Unhandled exception occurred", ex);
-        return Result.fail(500, "系统异常");
+        return Result.fail(ApiResponseConstants.SYSTEM_ERROR_CODE, ApiResponseConstants.SYSTEM_ERROR_MESSAGE);
     }
 }
