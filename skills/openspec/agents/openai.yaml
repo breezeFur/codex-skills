@@ -1,0 +1,3 @@
+interface:
+  display_name: "OpenSpec"
+  short_description: "Use the local OpenSpec CLI for project specifications and long-term memory"

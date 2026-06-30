@@ -1,0 +1,74 @@
+---
+name: openspec
+description: Use local OpenSpec CLI for spec-driven development and project memory. Use when a task involves project specifications, proposal/design/tasks files, openspec directories, business rules, API contracts, architecture changes, cross-module changes, current system behavior, change archival, or when the user asks to initialize, validate, inspect, update, or archive OpenSpec specs. Do not force OpenSpec for simple questions or small fixes.
+---
+
+# OpenSpec
+
+## Overview
+
+Use this skill to work with OpenSpec as the project specification and long-term memory layer. Treat OpenSpec like CodeGraph: it is a local tool and workflow guide, not source code to vendor into the skills sync repository.
+
+## Priority
+
+- User instructions, project `AGENTS.md`, global `AGENTS.md`, and user-authored skills under `$env:USERPROFILE\.codex\skills` take precedence.
+- Use OpenSpec for "what/why/current behavior" and `vibecodingdoc` for "what actually changed and how it was verified".
+- Combine with CodeGraph for implementation work: OpenSpec explains intended behavior; CodeGraph explains current code structure.
+
+## First Move
+
+In the target project, check whether OpenSpec is already initialized:
+
+```powershell
+openspec context
+openspec list
+openspec list --specs
+```
+
+If the command says no OpenSpec root exists, do not initialize automatically unless the user asked for OpenSpec setup or the task is clearly a spec-worthy cross-module feature, architecture change, API contract change, or long-lived business rule.
+
+## Common Commands
+
+Initialize in a project only when appropriate:
+
+```powershell
+openspec init
+```
+
+Inspect current context, changes, and specs:
+
+```powershell
+openspec context
+openspec list
+openspec list --specs
+openspec show <change-or-spec>
+```
+
+Validate before implementation or archival:
+
+```powershell
+openspec validate <change-or-spec>
+openspec doctor
+```
+
+Archive completed changes after the implementation and verification are done:
+
+```powershell
+openspec archive <change-name>
+```
+
+## Workflow
+
+1. Read the relevant OpenSpec context before designing spec-worthy changes.
+2. For a new change, create or update proposal/design/tasks/spec deltas through OpenSpec commands or the existing project convention.
+3. Validate the OpenSpec change before using it as an implementation source.
+4. Use CodeGraph or normal code inspection to implement against the approved specification.
+5. Keep `vibecodingdoc` for actual edit records and verification evidence.
+6. Archive only after the implementation is complete and verified.
+
+## Boundaries
+
+- Do not use OpenSpec as a replacement for code search, CodeGraph, tests, or build verification.
+- Do not create OpenSpec changes for trivial typo fixes, one-line config edits, simple questions, or obvious local bug fixes unless the user asks.
+- Do not put secrets, credentials, cookies, local machine paths, or temporary investigation logs into OpenSpec specs.
+- If OpenSpec instructions conflict with user custom Java, PowerShell, MySQL, GitHub-sync, or other local skills, follow the local skill unless the user explicitly says otherwise.
