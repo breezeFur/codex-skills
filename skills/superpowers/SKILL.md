@@ -12,6 +12,7 @@ Use this skill as a thin bridge to the installed Superpowers workflow skills. Do
 ## Priority
 
 - User instructions, project `AGENTS.md`, global `AGENTS.md`, and user-authored skills under `$env:USERPROFILE\.codex\skills` take precedence.
+- For Java backend development, apply `java-dev` + `java-code-style` + `codegraph` first. Superpowers may shape the work process, but it does not decide Java architecture, module placement, constants, logging, comments, exceptions, DTO/VO placement, DAO rules, or verification strategy.
 - Superpowers is an execution-methodology layer, not a replacement for local skills such as `java-dev`, `java-code-style`, `powershell-codex`, `mysql-db-ops`, `codegraph`, `openspec`, or `skill-manage-github`.
 - Simple and explicit tasks do not require the full Superpowers workflow unless the user asks for it.
 

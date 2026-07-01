@@ -9,6 +9,10 @@ description: Use local CodeGraph tools for repository code understanding. Use wh
 
 Use this skill to inspect code structure with local CodeGraph before doing broad manual file search. It is especially useful for architecture, bug tracing, call flow, and impact analysis.
 
+## Priority
+
+For Java backend development, pair CodeGraph with `java-dev` and `java-code-style` by default. CodeGraph explains the current repository structure, symbols, callers, callees, and impact surface; `java-dev` and `java-code-style` still govern Java architecture, module placement, constants, logging, comments, exceptions, and style rules. OpenSpec and Superpowers are lower-priority helpers and must not replace CodeGraph for code understanding when a `.codegraph/` index exists.
+
 ## First Move
 
 For any "how does this work", architecture, bug, or flow question, call `codegraph_context` first with a concise task description.

@@ -1,13 +1,23 @@
 ---
 name: java-dev
-description: Generate and maintain Java backend services and modules using Maven, JDK 21, Spring Boot 3.4, Lombok, MySQL, MyBatis-Plus, MyBatis-Plus-Join, Redis, SpringDoc OpenAPI, typed unified API responses, service-name-based multi-module architecture, DAO/Mapper/Entity data layering, MetaObjectHandler audit filling, UUIDv7 IDs, Long millisecond timestamps, Chinese OpenAPI descriptions, framework interceptors, ThreadLocal context, exception handling, MDC trackId log format, framework constants classes with Chinese comments, Controller/Service business modules, and tests. Use when creating or modifying Java projects, modules, controllers, services, DAOs, mappers, entities, request/response DTOs, VO objects, database access, Redis cache, OpenAPI annotations, framework infrastructure, shared constants, or fixing Java code to match these conventions. For Java coding style, constants, logging statements, comments, Lombok consistency, magic values, and naming cleanup, use java-code-style.
+description: Generate and maintain Java backend services/modules using Maven, JDK 21, Spring Boot 3.4, Lombok, MySQL, MyBatis-Plus/MPJ, Redis, SpringDoc, typed API responses, service-name multi-module architecture, DAO/Mapper/Entity layering, MetaObjectHandler audit, UUIDv7 IDs, millisecond timestamps, Chinese OpenAPI, framework interceptors, ThreadLocal context, exception handling, MDC trackId logs, shared constants, Controllers/Services, and tests. Use when creating or modifying Java projects, modules, controllers, services, DAOs, mappers, entities, DTO/VO, database access, Redis, OpenAPI, framework infrastructure, shared constants, or aligning Java code to these conventions. Pair with java-code-style for style/constants/logging/comments/Lombok/magic values and with codegraph for repository understanding when .codegraph exists. OpenSpec and Superpowers are lower-priority helpers.
 ---
 
 # Java Dev
 
+## Priority And Skill Routing
+
+For Java backend work, use this skill together with `java-code-style` and `codegraph` by default:
+
+- `java-dev` owns project architecture, module boundaries, Java backend conventions, database layering, API contracts, framework infrastructure, and verification choices.
+- `java-code-style` owns constants, magic values, SLF4J logging statements, comments, Lombok consistency, naming cleanup, explicit exceptions, and unsafe fallback cleanup.
+- `codegraph` owns repository understanding when `.codegraph/` exists: use it before broad text search for architecture, call flow, impact analysis, and cross-file code changes.
+
+OpenSpec and Superpowers are lower-priority helpers. Use OpenSpec only for spec-worthy business rules, API contracts, architecture changes, cross-module behavior, and long-term project memory. Use Superpowers only for design, planning, TDD, systematic debugging, code review, or completion discipline on complex work. Neither OpenSpec nor Superpowers may override `java-dev`, `java-code-style`, `codegraph`, project `AGENTS.md`, or direct user instructions.
+
 ## Workflow
 
-1. Inspect the repository before creating or changing files: read the root build file, module list, package names, existing response wrapper, existing ID utilities, and representative Controller/Service/DAO/Entity classes.
+1. Inspect the repository before creating or changing files. When `.codegraph/` exists, use `codegraph` first for architecture, call flow, related symbols, and impact analysis; then read the root build file, module list, package names, existing response wrapper, existing ID utilities, and representative Controller/Service/DAO/Entity classes.
 2. Decide whether the task is full service generation, a new module, or local code changes.
 3. Prefer the existing project's naming, package layout, response wrapper, timestamp field names, and module prefix. For new services, use the requested service name as the module prefix.
 4. Use Maven, JDK 21, Spring Boot 3.4, Lombok, MySQL, MyBatis-Plus, MyBatis-Plus-Join, Redis, and SpringDoc unless the existing project already pins compatible versions.
@@ -29,6 +39,7 @@ description: Generate and maintain Java backend services and modules using Maven
 ## Non-Negotiable Rules
 
 - Do not invent a new architecture when an existing project already has one.
+- Do not let OpenSpec or Superpowers change Java architecture, module placement, logging, exception, constant, DTO/VO, DAO, or verification rules defined by `java-dev`, `java-code-style`, and the current project.
 - Put the application startup class in the service main module.
 - Put database entities, mappers, DAOs, DAO implementations, and database configuration in the service database module.
 - Do not store real database credentials in skill assets or synced skill repositories. Only fill real datasource values in the project-local generated `DbCodeGenerator.java` when needed for the current task.

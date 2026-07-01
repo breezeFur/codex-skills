@@ -1,4 +1,4 @@
 interface:
   display_name: "Java Dev"
   short_description: "Java backend service and module conventions"
-  default_prompt: "Use $java-dev to create or update a Java backend module following the project conventions."
+  default_prompt: "Use $java-dev with $java-code-style and $codegraph to create or update Java backend code; treat OpenSpec and Superpowers as lower-priority helpers."
