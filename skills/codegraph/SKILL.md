@@ -11,7 +11,7 @@ Use this skill to inspect code structure with local CodeGraph before doing broad
 
 ## Priority
 
-For Java backend development, pair CodeGraph with `java-dev` and `java-code-style` by default. CodeGraph explains the current repository structure, symbols, callers, callees, and impact surface; `java-dev` and `java-code-style` still govern Java architecture, module placement, constants, logging, comments, exceptions, and style rules. OpenSpec and Superpowers are lower-priority helpers and must not replace CodeGraph for code understanding when a `.codegraph/` index exists.
+For Java backend development, pair CodeGraph with `java-dev`, `java-code-style`, `OpenSpec`, and `Superpowers` by default. CodeGraph explains the current repository structure, symbols, callers, callees, and impact surface; `java-dev` and `java-code-style` still govern Java architecture, module placement, constants, logging, comments, exceptions, and style rules. OpenSpec and Superpowers participate by default as lower-priority helpers and must not replace CodeGraph for code understanding when a `.codegraph/` index exists.
 
 ## First Move
 

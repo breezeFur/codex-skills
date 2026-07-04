@@ -12,7 +12,8 @@ Use this skill to work with OpenSpec as the project specification and long-term 
 ## Priority
 
 - User instructions, project `AGENTS.md`, global `AGENTS.md`, and user-authored skills under `$env:USERPROFILE\.codex\skills` take precedence.
-- For Java backend development, apply `java-dev` + `java-code-style` + `codegraph` first. OpenSpec is lower priority and only records/specifies intended behavior; it does not decide Java module placement, code style, constants, logging, exceptions, DTO/VO placement, DAO rules, or verification strategy.
+- For Java backend development, participate by default alongside `java-dev` + `java-code-style` + `codegraph` + `Superpowers`. OpenSpec is still lower priority and only records/specifies intended behavior; it does not decide Java module placement, code style, constants, logging, exceptions, DTO/VO placement, DAO rules, or verification strategy.
+- If a Java task is a local bug fix or simple edit, explicitly state that no OpenSpec change is needed instead of silently omitting OpenSpec from the workflow.
 - Use OpenSpec for "what/why/current behavior" and `vibecodingdoc` for "what actually changed and how it was verified".
 - Combine with CodeGraph for implementation work: OpenSpec explains intended behavior; CodeGraph explains current code structure.
 
