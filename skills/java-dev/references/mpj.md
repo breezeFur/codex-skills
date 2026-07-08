@@ -45,6 +45,24 @@ return selectJoinOne(OrderDetailVo.class, wrapper);
 
 Adapt the base class and method names to the project's MPJ version and DAO superclass.
 
+## List And Page Ordering
+
+- For `MPJLambdaWrapper` or project-style `mpjLambda` list and paginated queries, add default create-time descending order.
+- Prefer the project's audit field name, such as `Entity::getCreatedAt`, `Entity::getCreateTime`, or the existing create-time getter.
+- If the request already provides a sort field, or the business rule requires another stable order, use the explicit order instead.
+- If the entity has no create-time field, use the existing project-standard stable timestamp or ID order and make the reason clear in review or a short code comment when it is not obvious.
+
+```java
+MPJLambdaWrapper<OrderEntity> wrapper = new MPJLambdaWrapper<OrderEntity>()
+        .selectAs(OrderEntity::getId, OrderListVo::getId)
+        .selectAs(UserEntity::getName, OrderListVo::getUserName)
+        .leftJoin(UserEntity.class, UserEntity::getId, OrderEntity::getUserId)
+        .eq(OrderEntity::getStatus, request.getStatus())
+        .orderByDesc(OrderEntity::getCreatedAt);
+
+return selectJoinPage(page, OrderListVo.class, wrapper);
+```
+
 ## Pagination
 
 - Use the project page request and page response types.

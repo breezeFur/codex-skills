@@ -55,6 +55,7 @@ OpenSpec and Superpowers are default participants but lower-priority helpers. Th
 - Use fallback only for explicitly degradable paths such as cache miss/cache failure, metrics, optional recommendations, or non-critical notifications. Log useful context and keep the fallback narrow.
 - Put business Controllers, Services, module-local DTOs, response VOs, and business-local enums in business modules. Use the business module's `model.dto` and `model.vo` packages for DTO/VO classes that are only used by that module.
 - Keep normal database operations in DAO/DAO implementation classes using Lambda-style MyBatis-Plus or MPJ APIs.
+- For MPJ lambda list or paginated queries, add a deterministic default create-time descending order, for example `orderByDesc(Entity::getCreatedAt)` or the existing project's create-time field such as `createTime`, unless the request explicitly supplies another sort or the business rule requires another stable order.
 - Use Mapper annotation SQL only when raw SQL is necessary.
 - Services call DAOs, not Mappers, unless the existing project has an explicit local exception.
 - Do not expose QueryWrapper, LambdaQueryWrapper, LambdaUpdateWrapper, or MPJLambdaWrapper to Controllers.
