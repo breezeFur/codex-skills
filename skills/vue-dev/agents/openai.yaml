@@ -1,4 +1,4 @@
 interface:
   display_name: "Vue Dev"
   short_description: "Vue frontend app conventions and workflow"
-  default_prompt: "Use $vue-dev with $codegraph, $openspec, $superpowers, and $design-taste-frontend for Vue frontend work."
+  default_prompt: "Use $vue-dev with $codegraph, $openspec, and $design-taste-frontend for Vue frontend work."

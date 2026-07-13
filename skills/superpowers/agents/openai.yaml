@@ -1,3 +1,0 @@
-interface:
-  display_name: "Superpowers"
-  short_description: "Bridge to installed Superpowers design, planning, TDD, debugging, and verification workflows"

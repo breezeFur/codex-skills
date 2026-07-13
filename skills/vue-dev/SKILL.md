@@ -1,25 +1,24 @@
 ---
 name: vue-dev
-description: Generate and maintain Vue frontend applications using Vue 3, TypeScript, Vite, Vue Router, Pinia, Vitest, Playwright, API clients, component/module boundaries, admin/product UI conventions, landing/redesign visual quality, Chinese text safety, and verification. Use when creating or modifying Vue projects, pages, routes, components, composables, stores, API calls, forms, tables, dashboards, layouts, styles, tests, or frontend code that must align with existing project conventions. Default Vue workflow includes codegraph, OpenSpec, Superpowers, and design-taste-frontend where visual design applies.
+description: Generate and maintain Vue frontend applications using Vue 3, TypeScript, Vite, Vue Router, Pinia, Vitest, Playwright, API clients, component/module boundaries, admin/product UI conventions, landing/redesign visual quality, Chinese text safety, and verification. Use when creating or modifying Vue projects, pages, routes, components, composables, stores, API calls, forms, tables, dashboards, layouts, styles, tests, or frontend code that must align with existing project conventions. Default Vue workflow includes codegraph, OpenSpec, and design-taste-frontend where visual design applies.
 ---
 
 # Vue Dev
 
 ## Priority And Skill Routing
 
-For Vue frontend work, use this skill together with `codegraph`, `OpenSpec`, `Superpowers`, and `design-taste-frontend` by default:
+For Vue frontend work, use this skill together with `codegraph`, `OpenSpec`, and `design-taste-frontend` by default:
 
 - `vue-dev` owns Vue architecture, file placement, TypeScript boundaries, component contracts, state/API/routing choices, frontend error handling, and verification.
 - `codegraph` owns repository understanding when `.codegraph/` exists: use it before broad text search for route flow, shared components, stores, API clients, and impact analysis.
 - `OpenSpec` owns project specification and long-term memory checks: read or update specs for user flows, API contracts, permission rules, cross-module behavior, and long-lived product decisions. For local bug fixes or simple edits, explicitly state that no OpenSpec change is needed.
-- `Superpowers` owns execution discipline: use the relevant method, such as brainstorming, writing plans, TDD, systematic debugging, code review, or verification before completion. Keep the workflow lightweight for small, clear tasks.
 - `design-taste-frontend` owns visual taste for landing pages, portfolios, marketing pages, and redesigns. Do not force it onto dense dashboards, data tables, admin panels, or multi-step product UI unless the task includes visual redesign.
 
-OpenSpec, Superpowers, and design-taste-frontend are default participants but lower-priority helpers. They must be named in the task kickoff for Vue frontend work, with their intended role or skip reason. They may not override `vue-dev`, project `AGENTS.md`, existing project conventions, or direct user instructions.
+OpenSpec and design-taste-frontend are default participants but lower-priority helpers. They must be named in the task kickoff for Vue frontend work, with their intended role or skip reason. They may not override `vue-dev`, project `AGENTS.md`, existing project conventions, or direct user instructions. Choose design, planning, TDD, debugging, review, and verification depth directly from task risk and project needs without requiring a separate methodology skill.
 
 ## Workflow
 
-1. Start by naming the default Vue development stack: `vue-dev`, `codegraph`, `OpenSpec`, `Superpowers`, and `design-taste-frontend`. State whether OpenSpec needs a spec read/update, which Superpowers method applies, and whether design-taste applies or is skipped.
+1. Start by naming the default Vue development stack: `vue-dev`, `codegraph`, `OpenSpec`, and `design-taste-frontend`. State whether OpenSpec needs a spec read/update and whether design-taste applies or is skipped.
 2. Inspect the project before creating or changing files. When `.codegraph/` exists, use `codegraph` first for route/component/store/API flow and impact analysis; then read `package.json`, router setup, app entry, representative pages, shared components, API clients, stores, and style config.
 3. Preserve the existing framework and package manager. Do not switch Vue CLI/Vite/Nuxt, npm/pnpm/yarn/bun, UI library, state library, routing mode, CSS system, or lint/test tools unless the user asks or the current setup is broken.
 4. Decide whether the task is greenfield app setup, new feature/page, local bug fix, API integration, visual redesign, or spec-worthy behavior/architecture work.
@@ -36,7 +35,7 @@ OpenSpec, Superpowers, and design-taste-frontend are default participants but lo
 ## Non-Negotiable Rules
 
 - Do not invent a new frontend architecture when an existing project already has one.
-- Do not let OpenSpec, Superpowers, or design-taste-frontend change Vue architecture, package manager, UI library, module placement, API error handling, state placement, routing rules, or verification rules defined by `vue-dev` and the current project.
+- Do not let OpenSpec or design-taste-frontend change Vue architecture, package manager, UI library, module placement, API error handling, state placement, routing rules, or verification rules defined by `vue-dev` and the current project.
 - Use Vue 3 Composition API with `<script setup lang="ts">` for new Single File Components unless the existing project standard differs.
 - Prefer TypeScript for new code. Avoid `any`; use `unknown`, typed API DTOs, discriminated unions, generics, or narrowed runtime checks.
 - Keep route-level pages thin. Put reusable UI in `components`, feature logic in feature modules, cross-feature logic in `shared` or `common`, and side-effectful logic in composables, stores, or API clients.

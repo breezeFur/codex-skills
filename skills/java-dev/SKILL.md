@@ -1,25 +1,24 @@
 ---
 name: java-dev
-description: Generate and maintain Java backend services/modules using Maven, JDK 21, Spring Boot 3.4, Lombok, MySQL, MyBatis-Plus/MPJ, Redis, SpringDoc, typed API responses, service-name multi-module architecture, DAO/Mapper/Entity layering, MetaObjectHandler audit, UUIDv7 IDs, millisecond timestamps, Chinese OpenAPI, framework interceptors, ThreadLocal context, exception handling, MDC trackId logs, shared constants, Controllers/Services, and tests. Use when creating or modifying Java projects, modules, controllers, services, DAOs, mappers, entities, DTO/VO, database access, Redis, OpenAPI, framework infrastructure, shared constants, or aligning Java code. Default Java workflow includes java-code-style, codegraph, OpenSpec, and Superpowers; OpenSpec/Superpowers remain lower-priority helpers.
+description: Generate and maintain Java backend services/modules using Maven, JDK 21, Spring Boot 3.4, Lombok, MySQL, MyBatis-Plus/MPJ, Redis, SpringDoc, typed API responses, service-name multi-module architecture, DAO/Mapper/Entity layering, MetaObjectHandler audit, UUIDv7 IDs, millisecond timestamps, Chinese OpenAPI, framework interceptors, ThreadLocal context, exception handling, MDC trackId logs, shared constants, Controllers/Services, and tests. Use when creating or modifying Java projects, modules, controllers, services, DAOs, mappers, entities, DTO/VO, database access, Redis, OpenAPI, framework infrastructure, shared constants, or aligning Java code. Default Java workflow includes java-code-style, codegraph, and OpenSpec; OpenSpec remains a lower-priority helper.
 ---
 
 # Java Dev
 
 ## Priority And Skill Routing
 
-For Java backend work, use this skill together with `java-code-style`, `codegraph`, `OpenSpec`, and `Superpowers` by default:
+For Java backend work, use this skill together with `java-code-style`, `codegraph`, and `OpenSpec` by default:
 
 - `java-dev` owns project architecture, module boundaries, Java backend conventions, database layering, API contracts, framework infrastructure, and verification choices.
 - `java-code-style` owns constants, magic values, SLF4J logging statements, comments, Lombok consistency, naming cleanup, explicit exceptions, and unsafe fallback cleanup.
 - `codegraph` owns repository understanding when `.codegraph/` exists: use it before broad text search for architecture, call flow, impact analysis, and cross-file code changes.
 - `OpenSpec` owns project specification and long-term memory checks: read or update specs for business rules, API contracts, architecture changes, cross-module behavior, and long-lived decisions. For local bug fixes or simple edits, explicitly state that no OpenSpec change is needed.
-- `Superpowers` owns execution discipline: use the relevant method, such as brainstorming, writing plans, TDD, systematic debugging, code review, or verification before completion. Keep the workflow lightweight for small, clear tasks.
 
-OpenSpec and Superpowers are default participants but lower-priority helpers. They must be named in the task kickoff for Java backend work, with their intended role or skip reason. Neither OpenSpec nor Superpowers may override `java-dev`, `java-code-style`, `codegraph`, project `AGENTS.md`, or direct user instructions.
+OpenSpec is a default participant but a lower-priority helper. It must be named in the task kickoff for Java backend work, with its intended role or skip reason. OpenSpec may not override `java-dev`, `java-code-style`, `codegraph`, project `AGENTS.md`, or direct user instructions. Choose design, planning, TDD, debugging, review, and verification depth directly from task risk and project needs without requiring a separate methodology skill.
 
 ## Workflow
 
-1. Start by naming the default Java development stack: `java-dev`, `java-code-style`, `codegraph`, `OpenSpec`, and `Superpowers`. State whether OpenSpec needs a spec read/update and which Superpowers method applies, or give a short skip reason.
+1. Start by naming the default Java development stack: `java-dev`, `java-code-style`, `codegraph`, and `OpenSpec`. State whether OpenSpec needs a spec read/update or give a short skip reason.
 2. Inspect the repository before creating or changing files. When `.codegraph/` exists, use `codegraph` first for architecture, call flow, related symbols, and impact analysis; then read the root build file, module list, package names, existing response wrapper, existing ID utilities, and representative Controller/Service/DAO/Entity classes.
 3. Decide whether the task is full service generation, a new module, local code changes, or spec-worthy behavior/architecture work.
 4. Prefer the existing project's naming, package layout, response wrapper, timestamp field names, and module prefix. For new services, use the requested service name as the module prefix.
@@ -42,7 +41,7 @@ OpenSpec and Superpowers are default participants but lower-priority helpers. Th
 ## Non-Negotiable Rules
 
 - Do not invent a new architecture when an existing project already has one.
-- Do not let OpenSpec or Superpowers change Java architecture, module placement, logging, exception, constant, DTO/VO, DAO, or verification rules defined by `java-dev`, `java-code-style`, and the current project.
+- Do not let OpenSpec change Java architecture, module placement, logging, exception, constant, DTO/VO, DAO, or verification rules defined by `java-dev`, `java-code-style`, and the current project.
 - Put the application startup class in the service main module.
 - Put database entities, mappers, DAOs, DAO implementations, and database configuration in the service database module.
 - Do not store real database credentials in skill assets or synced skill repositories. Only fill real datasource values in the project-local generated `DbCodeGenerator.java` when needed for the current task.
