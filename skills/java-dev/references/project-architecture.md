@@ -5,9 +5,9 @@ Use the requested service name as the module prefix for new services. For existi
 ## Standard Modules
 
 - `<service-name>-main`: application startup class, runtime configuration files, environment profiles, global scan entry, executable packaging.
-- `<service-name>-common`: optional module for pure shared contracts such as unified API response classes, basic DTOs, common enums, and small value objects. Do not put web interceptors or business logic here.
+- `<service-name>-common`: optional module for pure shared contracts such as unified API response classes, basic DTOs, common enums, and small value objects. Do not put web interceptors, business logic, or MyBatis-coupled pagination here.
 - `<service-name>-framework`: web infrastructure, exception handling, interceptors, request context, ThreadLocal holders, constants, framework configuration, shared utility classes.
-- `<service-name>-db`: database entities, mappers, DAOs, DAO implementations, database configuration, MyBatis-Plus configuration, MPJ setup, audit filling, and DAO-owned query projections.
+- `<service-name>-db`: database entities, mappers, DAOs, DAO implementations, database configuration, MyBatis-Plus configuration, MPJ setup, audit filling, MyBatis-backed pagination/base Mapper types when no shared MyBatis starter exists, and DAO-owned query projections.
 - `<service-name>-<business>`: business module containing Controllers, Services, Service implementations, module-local DTOs, response VOs, business-local enums, and module-specific configuration. Prefer `model.dto` and `model.vo` for DTO/VO classes that belong only to that business module. Shared DTO/VO classes should move down to the lowest shared module allowed by dependencies; they should reach the database module only when they are data-access projections.
 
 ## Dependency Direction
@@ -43,7 +43,7 @@ When creating a new service:
 1. Create the root Maven parent with dependency management.
 2. Create main, common when needed, framework, db, and requested business modules.
 3. Put the startup class only in the main module.
-4. Put API response, page response, exceptions, request context, audit filling, and database configuration in their owning modules.
+4. Put the API response wrapper, exceptions, and request context in their owning shared/framework modules. Put MyBatis-backed `PageResult<T>`, optional thin MPJ Mapper aliases, audit filling, and database configuration in the shared MyBatis integration module or service database module.
 5. Keep business modules focused on use cases rather than infrastructure.
 
 ## Existing Repository Changes

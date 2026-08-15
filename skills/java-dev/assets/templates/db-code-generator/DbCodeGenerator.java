@@ -41,8 +41,8 @@ public final class DbCodeGenerator {
     private static final Path JDBC_DRIVER_JAR = Path.of("");
 
     private static final Path PROJECT_ROOT = Path.of(".");
-    private static final String DB_MODULE_NAME = "career-db";
-    private static final String BASE_PACKAGE = "bigtreecloud.career.db";
+    private static final String DB_MODULE_NAME = "service-db";
+    private static final String BASE_PACKAGE = "com.example.service.db";
     private static final String SOURCE_ROOT = DB_MODULE_NAME + "/src/main/java";
     private static final String TABLE_NAME_PATTERN = "%";
     private static final Set<String> TABLE_NAMES = Set.of();
@@ -239,11 +239,10 @@ public final class DbCodeGenerator {
                 package %s.mapper;
 
                 import %s.entity.%s;
-                import com.github.yulichang.base.MPJBaseMapper;
                 import org.apache.ibatis.annotations.Mapper;
 
                 @Mapper
-                public interface %s extends MPJBaseMapper<%s> {
+                public interface %s extends MpjBaseMapper<%s> {
                 }
                 """.formatted(BASE_PACKAGE, BASE_PACKAGE, table.entityName(), table.mapperName(), table.entityName());
     }

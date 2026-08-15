@@ -8,7 +8,6 @@ Create these components in the service framework module unless the existing proj
 framework/
   web/
     Result.java
-    PageResult.java
     WebMvcConfig.java
   exception/
     BizException.java
@@ -27,12 +26,13 @@ framework/
 
 If the project has a common module, pure response contracts such as `Result` may live there. Web configuration and interceptors stay in framework.
 
-## Result And PageResult
+## Result
 
 - Provide a typed API response wrapper when no project wrapper exists.
-- Provide a typed pagination wrapper with total count, page number, page size, and records.
 - Add Chinese `@Schema` descriptions.
 - Move reusable response codes, default response messages, header names, request attribute names, and other shared API literals into focused constants classes under `framework.constants`.
+
+Do not put a MyBatis-backed `PageResult<T>` in framework. Put it in the existing shared MyBatis integration/starter module, or in the service database module when no shared integration module exists. See `mpj.md` for the official MPJ service path.
 
 ## Constants
 

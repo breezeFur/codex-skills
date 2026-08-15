@@ -32,6 +32,9 @@ Do not return raw `String`, `Boolean`, `List`, `IPage`, `Map`, or Entity from Co
 - Use a typed request class when inputs exceed 5 fields, have nested structure, or carry business meaning.
 - Return typed VO classes instead of Entities.
 - Use `PageResult<T>` or the existing project page wrapper for pagination output.
+- When `PageResult<T>` extends MyBatis-Plus `Page<T>` or implements `IPage<T>`, a simple GET endpoint may bind `@Valid PageResult<XxxVo>` directly. The client sends `current` and `size`; generic type `T`, `records`, `total`, and calculated page metadata are backend concerns.
+- Keep up to a few simple filters as separate path/query parameters beside `PageResult<T>`. Use a dedicated `XxxPageRequest` for structured filters, nested conditions, or many fields; do not add business filters to the reusable page type.
+- Pass the same page object from Controller through Service to the DAO. For direct MPJ DTO pagination, the Service may construct the MPJ wrapper and call the DAO's inherited `selectJoinListPage(page, dtoType, wrapper)`; Controllers must not call Mapper or `baseMapper`. Do not create a second page or use `PageResult.convert(...)` for this path.
 - If a request or response object is implemented as a Java `record`, treat it the same as a DTO/VO class: add class-level and component-level Chinese `@Schema` annotations.
 
 ## Default Result Shape

@@ -44,6 +44,8 @@ OpenSpec is a default participant but a lower-priority helper. It must be named 
 - Do not let OpenSpec change Java architecture, module placement, logging, exception, constant, DTO/VO, DAO, or verification rules defined by `java-dev`, `java-code-style`, and the current project.
 - Put the application startup class in the service main module.
 - Put database entities, mappers, DAOs, DAO implementations, and database configuration in the service database module.
+- Put a MyBatis-backed `PageResult<T>` in the existing shared MyBatis integration/starter module. If the repository has no shared MyBatis module, put it in the service database module; do not put MyBatis-coupled pagination in a generic base, common, or framework module. Only add a thin project `MpjBaseMapper<T>` alias when the repository already standardizes Mapper inheritance; do not add custom pagination overloads that duplicate MPJ APIs.
+- Make `PageResult<T>` extend MyBatis-Plus `Page<T>` or otherwise implement `IPage<T>` so MyBatis-Plus and MPJ fill it directly. Do not query into a framework page and manually copy `records`, `total`, `current`, and `size` afterward.
 - Do not store real database credentials in skill assets or synced skill repositories. Only fill real datasource values in the project-local generated `DbCodeGenerator.java` when needed for the current task.
 - Put interceptors, ThreadLocal holders, constants, exception handling, custom exceptions, and shared web infrastructure in the service framework module.
 - Put shared constants in the service framework module under the `framework.constants` package. Create focused constants classes by responsibility, such as `ApiResponseConstants`, `WebConstants`, `CacheConstants`, or `SecurityConstants`; do not create a catch-all `CommonConstants` for unrelated values.
@@ -56,12 +58,14 @@ OpenSpec is a default participant but a lower-priority helper. It must be named 
 - Keep normal database operations in DAO/DAO implementation classes using Lambda-style MyBatis-Plus or MPJ APIs.
 - For MPJ lambda list or paginated queries, add a deterministic default create-time descending order, for example `orderByDesc(Entity::getCreatedAt)` or the existing project's create-time field such as `createTime`, unless the request explicitly supplies another sort or the business rule requires another stable order.
 - Use Mapper annotation SQL only when raw SQL is necessary.
-- Services call DAOs, not Mappers, unless the existing project has an explicit local exception.
+- Services call DAOs, not Mappers or `baseMapper`. For a direct MPJ DTO list/page query, the Service may build the `MPJLambdaWrapper`, while the DAO inherits `MPJBaseService<T>` and exposes MPJ's official `selectJoinListPage(page, dtoType, wrapper)` directly. Do not add a redundant `pageByRoleId`-style proxy when the official DAO method is sufficient. DAO implementations may use `baseMapper` internally for persistence details.
+- Pass the Controller-bound `PageResult<Vo>` through unchanged and return that same object after `selectJoinListPage` fills its records and metadata. Do not create a second page, manually copy pagination fields, or use `PageResult.convert(...)` in new direct MPJ DTO pagination code.
 - Do not expose QueryWrapper, LambdaQueryWrapper, LambdaUpdateWrapper, or MPJLambdaWrapper to Controllers.
 - Controller responses must use a typed unified response wrapper. In new services, create `Result<T>`; in existing services, reuse the existing wrapper such as `ApiResponse<T>`.
 - Do not use `Map` as request or response DTO. Define typed request objects and VOs.
 - Use direct method parameters only for 5 or fewer simple inputs. Use a typed request object for more than 5 inputs or any structured/business object input.
 - Do not return database Entity classes from Controllers.
+- For a simple paginated GET endpoint, a Controller may bind `@Valid PageResult<XxxVo>` directly; clients send only `current` and `size`, while the Java generic type is determined by backend code. Keep a few simple filters as separate parameters, and use a dedicated `XxxPageRequest` when filters are structured or numerous.
 - Use UUIDv7 for new database IDs through a central ID generator abstraction. If the project already has an ID utility, extend or reuse it.
 - Use `Long` millisecond Unix timestamps for new create/update time fields unless the existing table already uses another type.
 - Prefer audit field names `createdAt`, `updatedAt`, `createdBy`, and `updatedBy`; follow existing project names if different.
