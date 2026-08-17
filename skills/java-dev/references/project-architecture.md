@@ -43,7 +43,7 @@ When creating a new service:
 1. Create the root Maven parent with dependency management.
 2. Create main, common when needed, framework, db, and requested business modules.
 3. Put the startup class only in the main module.
-4. Put the API response wrapper, exceptions, and request context in their owning shared/framework modules. Put MyBatis-backed `PageResult<T>`, optional thin MPJ Mapper aliases, audit filling, and database configuration in the shared MyBatis integration module or service database module.
+4. Put the API response wrapper, exceptions, and request context in their owning shared/framework modules. Put MyBatis-backed `YPage<T>`, optional thin MPJ Mapper aliases, audit filling, and database configuration in the shared MyBatis integration module or service database module.
 5. Keep business modules focused on use cases rather than infrastructure.
 
 ## Existing Repository Changes

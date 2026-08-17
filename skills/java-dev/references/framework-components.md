@@ -32,7 +32,7 @@ If the project has a common module, pure response contracts such as `Result` may
 - Add Chinese `@Schema` descriptions.
 - Move reusable response codes, default response messages, header names, request attribute names, and other shared API literals into focused constants classes under `framework.constants`.
 
-Do not put a MyBatis-backed `PageResult<T>` in framework. Put it in the existing shared MyBatis integration/starter module, or in the service database module when no shared integration module exists. See `mpj.md` for the official MPJ service path.
+Do not put a MyBatis-backed `YPage<T>` in framework. Put it in the existing shared MyBatis integration/starter module, or in the service database module when no shared integration module exists. See `mpj.md` for the official MPJ service path.
 
 ## Constants
 

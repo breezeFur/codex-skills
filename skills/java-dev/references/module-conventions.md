@@ -54,7 +54,7 @@ Use the repository package root, then module responsibility:
 - Do not put a DTO/VO into the database module just because a Service uses DAO data to build it.
 - If a business module calls DAO-provided Lambda/MPJ-capable methods and assembles a response for one use case, keep that response VO in the business module's `model.vo` package.
 - Do not put Controller-only request classes in the database module for new code; keep request/command DTOs in the owning business module's `model.dto` package unless the existing project uses a different local convention.
-- Put `PageResult<T>` in an existing shared MyBatis integration/starter package when the repository has one. Otherwise use the database module's `db.result` package because it depends on MyBatis APIs. A `db.mapper.MpjBaseMapper<T>` may be a thin alias for an existing project convention, but it must not duplicate official MPJ pagination methods.
+- Put `YPage<T>` in an existing shared MyBatis integration/starter package when the repository has one. Otherwise use the database module's `db.result` package because it depends on MyBatis APIs. A `db.mapper.MpjBaseMapper<T>` may be a thin alias for an existing project convention, but it must not duplicate official MPJ pagination methods.
 
 ## DTO/VO Placement Decision Tree
 

@@ -18,16 +18,27 @@ proxy when MPJ already exposes the required service method.
 
 ## Pagination Ownership
 
-- Put a reusable `PageResult<T>` in the repository's existing shared MyBatis integration/starter module.
-- If no shared MyBatis module exists, put it in the service database module, for example `db.result.PageResult`.
+- Put a reusable `YPage<T>` in the repository's existing shared MyBatis integration/starter module.
+- If no shared MyBatis module exists, put it in the service database module, for example `db.result.YPage`.
 - Do not put a MyBatis-coupled page type in a generic base, common, or framework module.
-- Make `PageResult<T>` extend MyBatis-Plus `Page<T>` or implement `IPage<T>`. Prefer extending `Page<T>` so MP and MPJ can fill it directly.
+- Make `YPage<T>` extend MyBatis-Plus `Page<T>` or implement `IPage<T>`. Prefer extending `Page<T>` so MP and MPJ can fill it directly.
 - Validate `current >= 1` and bound `size` with the project's maximum page size.
 - Let MyBatis-Plus or MPJ populate `records`, `total`, and page metadata on the page object supplied by the caller.
-- Do not create a second page, manually copy `records`/`total`/`current`/`size`, or use `PageResult.convert(...)` in a new direct MPJ DTO pagination path.
+- Do not create a second page, manually copy `records`/`total`/`current`/`size`, or use `YPage.convert(...)` in a new direct MPJ DTO pagination path.
 
-Use `assets/templates/service-db/.../db/result/PageResult.java` as the default for a new service
+Use `assets/templates/service-db/.../db/result/YPage.java` as the default for a new service
 without a shared MyBatis starter.
+
+## GET And Write Parameter Rules
+
+- Apply the same parameter rule to every GET query endpoint, not only paginated endpoints.
+- When a GET endpoint has fewer than 5 simple business inputs, use direct `@RequestParam` and
+  `@PathVariable` parameters. Add a Chinese `@Parameter(description = "...")` to every direct
+  parameter. A `YPage<T>` parameter is framework pagination and does not count toward the limit.
+- When a GET endpoint has 5 or more business inputs, nested or structured criteria, repeated sort
+  rules, or a meaningful query object, use a typed `XxxQuery` or `XxxPageRequest` DTO.
+- POST, PUT, and PATCH endpoints default to a typed `@Valid @RequestBody` request DTO regardless
+  of field count. Add Chinese `@Schema` descriptions to the request type and exposed fields.
 
 ## Official MPJ Service Path
 
@@ -88,9 +99,10 @@ is never sent over HTTP.
 
 ```java
 @GetMapping("/{roleId}/users")
-public Result<PageResult<UserDetailVo>> listUsers(
+public Result<YPage<UserDetailVo>> listUsers(
         @PathVariable String roleId,
-        @Valid PageResult<UserDetailVo> page,
+        @Valid YPage<UserDetailVo> page,
+        @Parameter(description = "用户名，支持模糊查询")
         @RequestParam(required = false) String username) {
     return Result.success(userService.listUsers(roleId, username, page));
 }
@@ -99,10 +111,10 @@ public Result<PageResult<UserDetailVo>> listUsers(
 The Service builds the wrapper and passes the same page object to the official DAO method:
 
 ```java
-public PageResult<UserDetailVo> listUsers(
+public YPage<UserDetailVo> listUsers(
         String roleId,
         String username,
-        PageResult<UserDetailVo> page) {
+        YPage<UserDetailVo> page) {
     requireRole(roleId);
     MPJLambdaWrapper<User> wrapper = JoinWrappers.lambda(User.class)
             .selectAll(User.class)
@@ -117,9 +129,9 @@ public PageResult<UserDetailVo> listUsers(
 
 This flow has one page object from Controller to MPJ and back:
 
-`Controller PageResult<VO> -> Service wrapper -> DAO selectJoinListPage -> same PageResult<VO>`
+`Controller YPage<VO> -> Service wrapper -> DAO selectJoinListPage -> same YPage<VO>`
 
-Do not call `page.convert(...)`, do not create `PageResult.of(page.getCurrent(), page.getSize())`
+Do not call `page.convert(...)`, do not create `YPage.of(page.getCurrent(), page.getSize())`
 inside the direct DTO path, and do not manually copy records or pagination metadata. MPJ writes
 the mutable DTO records and page metadata into the supplied page.
 

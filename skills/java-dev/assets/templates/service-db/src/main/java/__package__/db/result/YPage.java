@@ -12,7 +12,7 @@ import java.util.List;
  * @param <T> 后端确定的分页记录类型
  */
 @Schema(description = "分页请求与响应")
-public class PageResult<T> extends Page<T> {
+public class YPage<T> extends Page<T> {
 
     @Override
     @Schema(description = "当前页码", example = "1")
@@ -47,30 +47,36 @@ public class PageResult<T> extends Page<T> {
         return super.getRecords();
     }
 
-    public PageResult() {
+    public YPage() {
         super();
         setRecords(List.of());
     }
 
-    public PageResult(long current, long size) {
+    public YPage(long current, long size) {
         super(current, size);
         setRecords(List.of());
     }
 
-    public PageResult(long current, long size, long total) {
+    public YPage(long current, long size, long total) {
         super(current, size, total);
         setRecords(List.of());
     }
 
-    public static <T> PageResult<T> of(long current, long size) {
-        return new PageResult<>(current, size);
+    public static <T> YPage<T> of(long current, long size) {
+        return new YPage<>(current, size);
     }
 
-    public static <T> PageResult<T> of(long current, long size, long total) {
-        return new PageResult<>(current, size, total);
+    public static <T> YPage<T> of(long current, long size, long total) {
+        return new YPage<>(current, size, total);
     }
 
-    public static <T> PageResult<T> empty(long current, long size) {
-        return new PageResult<>(current, size, 0);
+    public static <T> YPage<T> of(long current, long size, long total, List<T> records) {
+        YPage<T> page = new YPage<>(current, size, total);
+        page.setRecords(records == null ? List.of() : records);
+        return page;
+    }
+
+    public static <T> YPage<T> empty(long current, long size) {
+        return new YPage<>(current, size, 0);
     }
 }

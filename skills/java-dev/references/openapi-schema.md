@@ -7,7 +7,7 @@ Use SpringDoc OpenAPI annotations for new API code.
 - Controller class: `@Tag`
 - API method: `@Operation`
 - Path/query parameters when helpful: `@Parameter`
-- Entity, Request, VO, Result, and PageResult classes or records: `@Schema`
+- Entity, Request, VO, Result, and YPage classes or records: `@Schema`
 - Important fields and record components: `@Schema(description = "...")`
 
 ## Language Rules
@@ -53,7 +53,7 @@ public class UserCreateRequest {
 
 ## Record DTO/VO Example
 
-When a Java `record` is used as an API request, API response, DTO, VO, Result, or PageResult, annotate the record itself and every record component with Chinese `@Schema` descriptions.
+When a Java `record` is used as an API request, API response, DTO, VO, Result, or YPage, annotate the record itself and every record component with Chinese `@Schema` descriptions.
 
 ```java
 @Schema(description = "用户详情响应")
