@@ -1,107 +1,95 @@
 ---
 name: sellersprite-market-research
-description: 使用已配置的 SellerSprite MCP 进行亚马逊市场调研与 AI 分析；适用于类目初筛、候选商品、ASIN 深挖、评论/VOC、关键词流量和市场进入判断。
+description: 使用已配置的 SellerSprite MCP（43个原生工具）进行亚马逊市场调研与 AI 商业分析，覆盖阶段一市场初筛（7表）、关卡 Top20 双标杆甄选、阶段二单品与 VOC 深挖（5表）、阶段三 12 章终局决策报告。用户询问选品、类目研究、竞品分析、需求趋势、评论 VOC、关键词或 SellerSprite 市场报告时使用。
 metadata:
-  short-description: SellerSprite 市场调研与 AI 分析
+  short-description: 卖家精灵亚马逊市场调研与深度选品决策专家 (43原子工具版)
 ---
 
-# SellerSprite 市场调研
+# SellerSprite 亚马逊市场调研与深度选品决策 (Market Research & Product Selection)
 
-这个 Skill 编排一套以证据为中心的亚马逊市场研究流程。SellerSprite 数据只能通过当前会话已配置的 SellerSprite MCP 获取；不要绕过 MCP 直接请求 SellerSprite HTTP API，也不要暴露密钥、请求头或完整敏感配置。
+本 Skill 基于真实的 43 个 SellerSprite MCP 工具进行端到端市场调研与选品决策。
 
-## 适用边界
+---
 
-- 输出市场事实、确定性计算、AI 判断和待核查假设，并明确区分四者。
-- 默认只读 MCP 和当前会话，不自动修改项目代码、数据库、MCP 配置或外部账户。
-- 工具数量和工具 ID 以运行时 MCP 发现结果为准；本 Skill 不假设固定的工具数量。
-- 详细工具分组和参数陷阱见 [references/tool-routing.md](references/tool-routing.md)，对话阶段和证据门槛见 [references/project-workflow.md](references/project-workflow.md)。
+## 核心避坑与调用铁律 (Critical Rules)
 
-## 开始前检查
+1. **工具命名对齐（无 `account_visits`）**：
+   - MCP 工具名为 `product_research`、`product_node`、`asin_detail`、`keepa_info`、`review`、`market_research_statistics`、`market_product_demand_trend` 等（MCP 客户端会自动带上前缀 `mcp__sellersprite-mcp__`）。
+   - **严禁调用不存在的 `get_account_visits` 或 `sellersprite_get_*` 伪工具**。
+2. **入参结构区分（`request` 包装 vs 标量平铺）**：
+   - **列表与市场类工具**：参数必须包裹在 `request` 对象中，例如：
+     `{ "request": { "marketplace": "US", "nodeIdPath": "2619533011:...", "month": "202607", "variation": "Y" } }`
+   - **单 ASIN 类工具**（`asin_detail`, `keepa_info`, `asin_sales_trend`, `asin_prediction`）：参数为顶层平铺格式：
+     `{ "marketplace": "US", "asin": "B0FDKQGRCK" }`
+3. **变体反转语义 (`variation`)**：
+   - 在商品筛选和市场统计中：`variation: "Y"` 代表**排除变体子体（只看独立 Listing）**，`"N"` 代表包含所有子变体。
+   - **原则**：大盘统计与 Top100 榜单**必须传 `variation: "Y"`**，严禁不传导致一个父体下的几十个子变体刷屏。
+4. **日期格式**：
+   - 统一为 `yyyyMM`（如 `202607`）。
+5. **字段精简 (`returnFields`)**：
+   - 强烈建议传入 `returnFields` 减少 token 消耗，如：`"asin,title,brand,price,totalUnits,totalAmount,rating,ratings,bsrRank,availableDate"`。
 
-1. 使用 ToolSearch 搜索 SellerSprite MCP，确认当前服务可用，并读取与本次问题相关工具的实时 input schema。不要根据记忆或本文件旧示例拼接参数。
-2. 以实际返回的完整工具 ID 调用；常见形式是 `mcp__sellersprite-mcp__<tool>`，但如果运行时返回不同名称，以运行时为准。
-3. 提取并规范化：`marketplace`、`nodeIdPath`、业务月份、关键词、ASIN、分析目标和用户允许的分析范围。调用参数的月份格式以实时 schema 为准，报告中同时记录业务月份和实际传参格式。
-4. 只追问会改变采集范围或决策的缺失信息。快速问题使用 `quick`；用户要求完整报告时使用 `full`，不因默认排序自动替用户选 ASIN。
+---
 
-如果 MCP 不可用、工具列表为空、schema 无法读取或关键字段不受支持，直接说明阻塞或数据缺口，不伪造结果。
+## 完整三阶段工作流 (Workflow)
 
-## 模式选择
+```text
+阶段一：市场初筛 (7张证据表) -> 关卡：Top20 双标杆挑选 (走量王 vs 高客单款) -> 阶段二：标杆深挖 (5张证据表) -> 阶段三：12 章破坏性决策报告
+```
 
-- `quick`：用户只问一个 ASIN 或一个局部问题。优先做详情、历史趋势和少量评论证据，不强制先跑市场初筛。
-- `screening`：市场规模、趋势、竞争结构、关键词机会和候选商品，停在候选选择关卡。
-- `deep-dive`：用户已提供或明确选定 ASIN，分析详情、销量/价格趋势、Keepa、评论/VOC、关键词和流量结构。
-- `full`：先做 `screening`，等待用户选择 1-3 个 ASIN 后再做 `deep-dive` 和最终判断。
-- `final`：仅复用当前会话或用户提供的可靠证据生成决策，不重复进行无必要的全量采集。
+### 1. 阶段一：市场初筛 (Market Screening)
 
-## 调研流程
+在同一站点、类目节点和业务月份下，采集 7 张证据表：
 
-### 市场初筛
+| 证据表 | 准确 MCP 工具名 | 核心参数与注意事项 | 业务分析核心 |
+| :--- | :--- | :--- | :--- |
+| **1. US / 候选商品** | `product_research` | `request: { marketplace, nodeIdPath, variation: "Y", order: { field: "total_units", desc: true }, size: 20 }` | 建立 Top20 候选池、价格带、留评率 |
+| **2. 行业销售趋势** | `market_research_statistics` | `request: { marketplace, nodeIdPath, month: "202607", topN: 10, newProduct: 6 }` | 近 4~12 个月单品均销、销售额、均价上移 |
+| **3. 行业需求及趋势** | `market_product_demand_trend` | `request: { marketplace, nodeIdPath, month: "202607" }` | 搜索购买比、退货率对比大盘均值 |
+| **4. 细分市场现状** | `market_research` | `request: { marketplace, nodeIdPath, topNum: 10 }` | 商品总数、品牌数、自营占比、A+普及率 |
+| **5. 细分市场退货率** | `market_product_demand_trend` | 读取其中的 `refundRate` / `cateRefundRate` | 退货率差值定级（高出大盘 3% 为高危） |
+| **6. 竞品品牌** | `market_brand_concentration` | `request: { marketplace, nodeIdPath, month: "202607", topN: 10 }` | CR3/CR10 品牌份额，垄断度判断 |
+| **7. 商品集中度** | `market_product_concentration` | `request: { marketplace, nodeIdPath, month: "202607", topN: 10 }` | Top10 商品销量份额，长尾空间 |
 
-按用户目标选择最小工具集合：
+阶段一结束时，输出初筛结论与 **Top20 候选矩阵**，停下来进入【关卡】。
 
-- 类目定位：产品类目查询工具获取 `nodeIdPath`。
-- 市场规模和趋势：市场研究/统计工具按月份采集；多个月份必须保持同一站点、类目、样本口径、`topN`/`topNum` 和新品定义。
-- 竞争结构：品牌、商品、卖家、卖家类型、国家分布、价格、上架时间和内容配置工具按问题选择。
-- 需求和关键词：市场需求趋势、关键词研究/挖掘、ABA 或 Google Trends 按需使用，并标注 Amazon 站内与站外来源差异。
-- 候选商品：商品研究或竞品列表工具；明确排序字段、分页范围、是否排除变体和样本边界。
+---
 
-初筛结束时输出候选列表、排序依据、样本范围、数据时间和缺失字段，并停在用户选择关卡。
+### 2. 关卡：Top20 双标杆挑选 (Selection Gate)
 
-### ASIN 深挖
+挑选 **2~3 个最具反差的标杆 ASIN** 进入阶段二：
+1. **标杆 A (走量王 / 基础款代表)**：如 $20~$28，BSR #1~3，销量最大，验证主流配置与价格底线。
+2. **标杆 B (高客单款 / 智能升级代表)**：如 $50~$70，月销过万，验证用户对升级功能的付费天花板。
+3. **标杆 C (差异化黑马，可选)**：上架 6 个月内放量的新品。
 
-针对用户选择的每个 ASIN：
+---
 
-- 基本盘：详情工具。
-- 销量、销售额、价格和生命周期：ASIN 销售趋势、预测和 Keepa 工具，优先使用详情/历史工具回答单 ASIN 历史问题。
-- 用户之声：评论工具按星级、类型、时间和页码做有边界抽样；不能把少量定向评论外推为全体用户意见。
-- 关键词和流量：先用流量结构统计判断自然/广告健康度，再按需调用关键词明细、关键词反查、流量扩展和关联商品工具。
-- 竞品和商业化：关联竞品、优惠趋势、转化、商标和站外趋势工具按问题调用。
+### 3. 阶段二：标杆深挖与 VOC (Deep Dive)
 
-### 最终决策
+针对选中的 ASIN 采集 5 张证据表：
 
-最终报告必须把市场级证据、样本 ASIN 证据和 AI 推断分开。给出：
+| 证据表 | 准确 MCP 工具名 | 核心入参规范 | 业务分析核心要点 |
+| :--- | :--- | :--- | :--- |
+| **8. 评价列表** | `review` | 平铺参数：`{ marketplace, asin, starList: [1, 2, 3], size: 20 }`（查差评）；`starList: [4, 5]`（查好评） | 买家第一手原声：故障部位、材质抱怨、包装吐槽 |
+| **9. VOC 痛点画像** | 基于 `review` 聚类 | 统计差评类型、发生频次、严重度 | 提炼 Defect-to-Roadmap 产品改良路线图 |
+| **10. Keywords** | `traffic_keyword` + `keyword_miner` | `traffic_keyword` (`request: { marketplace, asin, month }`) + `keyword_miner` (`request: { marketplace, keyword }`) | 流量词自然排名 vs 广告排名、PPC 建议竞价、进店主流量词 |
+| **11. ASIN销售趋势**| `asin_sales_trend` / `asin_prediction` | 平铺参数：`{ marketplace, asin }` | 月度销量走势、放量节点、断货与稳定性 |
+| **12. ASIN运营趋势**| `keepa_info` | 平铺参数：`{ marketplace, asin, dailyLatest: true }` | 历史价格走势、BSR 波动、促销打折依赖度 |
 
-- 市场结论：需求、竞争、价格和进入空间；
-- 产品假设：目标人群、功能、价格和差异化；
-- 风险：退货、可靠性、广告、供应链、合规、知识产权和售后；
-- 决策状态：`建议进入`、`进入验证阶段`、`暂不进入` 或 `无法判断`；
-- 进入前必须补验的字段、人工核实项和停止条件。
+---
 
-仅凭 SellerSprite 市场数据不能证明 ODM 成本、毛利、退货率、专利/认证、供应链稳定性或售后成本。关键商业闸门未通过时，最高输出 `进入验证阶段`，不要直接写成已批准投产。
+### 4. 阶段三：12 章破坏性决策报告输出 (Final Analysis)
 
-## 数据与工具规则
-
-统一规则和实际工具名见 [references/tool-routing.md](references/tool-routing.md)，执行时特别注意：
-
-- 复杂列表/市场工具通常需要 `{ "request": { ... } }`；单 ASIN 和统计工具可能是平铺参数，严格以实时 schema 为准。
-- `variation` 的语义可能反直觉：当前 SellerSprite schema 中 `Y` 表示排除变体、`N` 表示包含变体；不明确时使用 `Y` 并在报告记录。
-- 市场工具通常使用 `topN`，`market_research` 可能使用 `topNum`，不能混用。
-- 周期工具的日期格式和星期要求必须以 schema 为准；当前工具描述中 ABA 周工具和 `keyword_order` 周模式要求 `yyyyMMdd` 且为当周周六，月模式使用 `yyyyMM`。
-- `competitor_lookup` 最多 40 个 ASIN，`traffic_extend` 最多 20 个 ASIN；超过上限必须拆批并合并去重。
-- 优先使用 `returnFields` 降低响应体积，但不能为了省上下文省掉支撑结论的字段。
-- 列表工具必须根据 `total`、页数、`hasNextPage` 或实际 item 数决定是否继续分页；只取第一页时不得声称完成全量分析。
-- Keepa 和评论时间戳若由 schema 定义为毫秒，转换后再展示，保留原始时间范围。
-
-## 数据质量与降级
-
-每个重要结论至少记录：工具 ID、关键请求条件、业务月份、实际传参月份、返回字段、样本量、是否分页和置信度；敏感配置只记录已脱敏占位符。
-
-- 空响应：先检查必填字段、包装层级、日期和枚举；最多做 2 次有明确原因的修正重试。仍为空则记录为数据缺口并继续，不把空响应解释为零。
-- 工具报错或字段不支持：不要反复扩大调用；改用同一问题的替代工具或标记“当前 MCP 未覆盖”。
-- 字段冲突：同时保留来源、时间快照、父体/子体和列表/详情口径；优先较新且粒度更匹配的详情或历史工具，不能静默覆盖。
-- 数值校验：检查百分比合计、价格区间覆盖、样本数量、月份连续性和单位；算出的环比、占比和增长率写出输入范围。
-- 样本限制：TopN、评论抽样、定向星级、单个 ASIN 或有限月份都必须写在结论旁，不得外推为全市场事实。
-- “未发现竞争者”只能写成“在当前样本、关键词和工具范围内未观察到”，不能证明市场不存在竞争。
-
-## 输出要求
-
-普通回答按以下顺序组织：
-
-1. 调研范围、假设和模式；
-2. 数据来源、时间、样本口径和数据质量；
-3. 原始事实与确定性推导；
-4. AI 判断：机会、竞争、风险和建议；
-5. 候选 ASIN 或决策状态；
-6. 数据缺口、人工验证项和下一步。
-
-完整报告可以使用 12 章结构，但每章至少说明证据范围、核心判断、风险、对决策的影响和置信度。不要只输出一个没有来源的“进入/不进入”。
+严格按照 `references/report-template.md` 规范生成：
+1. **第一章 · 核心决策结论 (执行摘要先行)**：明确给出【强烈推荐进入 / 谨慎观察 / 坚决放弃】+ 五维评分雷达 + 核心破局点。
+2. **第二章 · 调研范围与数据质量自检**（诚实列出数据缺口与进入前人工补验清单）。
+3. **第三章 · 行业销售大盘与趋势**（含 Mermaid 折线图）。
+4. **第四章 · 需求端与关键词证据**（大词搜索量、年同比增速、购买率）。
+5. **第五章 · 细分市场现状与价格带分布**（价格带柱状图）。
+6. **第六章 · 竞争格局与品牌集中度**（CR3/CR10、自营占比）。
+7. **第七章 · 对标深挖 A：走量王爆品解剖**（销量、流量、Keepa 价格历史、优缺点）。
+8. **第八章 · 对标深挖 B：高客单标杆解剖**（放量逻辑、致命差评聚类）。
+9. **第九章 · 跨标杆 VOC 汇总与未满足诉求**（需求层级、对手差评即我方路线图）。
+10. **第十章 · 进入策略建议**（目标定价、产品形态、Slogan、主攻与回避词）。
+11. **第十一章 · 风险清单与应对方案**（退货率、广告通胀、供应链与售后）。
+12. **第十二章 · 终局决策矩阵与进入前必验清单**。
