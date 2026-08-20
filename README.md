@@ -8,11 +8,17 @@
 当前已同步的 skill：
 
 - `codegraph`
+- `design-taste-frontend`
 - `java-code-style`
 - `java-dev`
 - `mysql-db-ops`
+- `openspec`
+- `pdf`
+- `playwright`
 - `powershell-codex`
+- `sellersprite-market-research`
 - `skill-manage-github`
+- `vue-dev`
 
 不要把 Codex 自动管理的目录放进来，例如 `.system`、`plugins/cache`。
 
