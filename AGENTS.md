@@ -1,7 +1,6 @@
 # Global AI Rules
 
 1. Language: Always respond to the user in Chinese.
-2. Documentation: Whenever you modify or generate code, you MUST create a changelog file in the specific directory: `/doc/{YYYY-MM-DD-HH-MM-SS}+{Task_Name}.md`. Detail the changes made.
 3. 你写的代码需要完整的可调试可追踪中文日志 使用@Slf4j 的log
 
 全局协作偏好：
