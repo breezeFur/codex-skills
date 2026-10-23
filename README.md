@@ -16,7 +16,6 @@
 - `pdf`
 - `playwright`
 - `powershell-codex`
-- `sellersprite-market-research`
 - `skill-manage-github`
 - `vue-dev`
 
